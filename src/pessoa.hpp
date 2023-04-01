@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sstream>
+#include <vector>
+#include <random>
+
 using namespace std;
 
 class Pessoa{

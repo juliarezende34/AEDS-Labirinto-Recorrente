@@ -2,10 +2,10 @@
 #include "funcoes.hpp"
 
 int main(){    
-    int N, nMatrizesArquivo, linhaInicial, colunaInicial;
+    int N, nMatrizesArquivo, linhaInicial, colunaInicial, matrizAtual = 1;
     ifstream arquivo;
     string ** matriz;
-    //Pessoa * p = new Pessoa();
+    Pessoa * p = new Pessoa();
 
     //Retirada de informações do arquivo
     arquivo.open("dataset/input.data", ios::in);
@@ -22,11 +22,16 @@ int main(){
 
     cout << "N = " << N << endl;
     cout << "nMatrizesArquivo = " << nMatrizesArquivo << endl;
-    lerMatrizArquivo(matriz, arquivo, N);
-    
+
     linhaInicial = determinarLinhaInicial();
     colunaInicial = determinarColunaInicial();
 
+    for(int i = 0; i < nMatrizesArquivo; i++){
+        lerMatrizArquivo(matriz, arquivo, N);
+        criaArquivoEimprimeMatrizNoArquivo(nMatrizesArquivo, matriz, matrizAtual, N);
+    }
+    
+    andar(p, linhaInicial, colunaInicial, N);
 
     //Liberação da matriz
     for(int i = 0; i < N; i++){
