@@ -3,6 +3,7 @@
         "*.embeddedhtml": "html",
         "iostream": "cpp",
         "xstring": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "string": "cpp"
     }
 }

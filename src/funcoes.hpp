@@ -120,6 +120,14 @@ void lerMatrizArquivo(string ** matrizTexto, ifstream &arquivo, int N){
     }
 }
 
+void lerMatrizArquivoSeparado(string ** matriz, ifstream &arquivo, int N){
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++){
+            arquivo >> matriz[i][j];
+        }
+    }
+}
+
 int determinarLinhaInicial(){
     int linha;
     cout << "Digite a linha da posição inicial:\n>";
@@ -188,7 +196,7 @@ void imprimirMatriz(string ** matriz, int N){
     cout << endl;
 }
 
-void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N){
+void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo){
     string ** matriz;
     int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna;
     stringstream s;
@@ -200,59 +208,67 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N){
     int nArquivo = 1;
     stringstream auxiliar;
 
-    auxiliar << nArquivo;
-    nArquivoString = auxiliar.str();
-
-    nome = path + "matriz" + nArquivoString + ".data";
-    
     matriz = new string * [N];
     for(int i = 0; i < N; i++){
         matriz[i] = new string[N];
     }
-    
-    arquivoLeitura.open("dataset/input.data", ios::in);
-    lerMatrizArquivo(matriz, arquivoLeitura, N);
-    imprimirMatriz(matriz, N);
 
-    while((p->vida > 0) /* && ((linha != (N -1)) && (coluna != (N-1))) && ((linha != 0)) && (coluna != (N-1)) && ((linha != (N -1)) && (coluna != 0)) */){
-        cout << "Posição atual: " << linha << " " << coluna << " " << matriz[linha][coluna] << "\n";
-        if(matriz[linha][coluna] != "#"){
-            if((matriz[linha][coluna] != "*")){
-                cout << "Posição com número.\n";
-                valorAtual = atoi(matriz[linha][coluna].c_str());
-                if(valorAtual > 0){
-                    p->sacola++;
-                    valorAtual--;
-                    s << valorAtual;
-                    matriz[linha][coluna] = s.str();
-                    s.str("");
-                }
-                p->casasPercorridas++;
-                
-            }
+    while(nArquivo <= nMatrizesArquivo){
+        auxiliar << nArquivo;
+        nArquivoString = auxiliar.str();
 
-            else if(matriz[linha][coluna] == "*"){
-                p->vida--;
-                p->casasPercorridas++;
-                cout << "\nVocê perdeu uma vida.\n";
-            }
-        }
+        nome = path + "matriz" + nArquivoString + ".data";
 
-        acrescimoLinha = sorteioLinha(linha, N);
-        acrescimoColuna = sorteioColuna(coluna, N);
-
-        if(matriz[linha + acrescimoLinha][coluna + acrescimoColuna] != "#"){
-            linha += acrescimoLinha;
-            coluna += acrescimoColuna;
-        }
-        else{
-            cout << "A posição sorteada foi uma parede. Vamos sortear de novo.\n";
-        }
+        cout << "\nARQUIVO: " << nome << endl;
         
-        imprimirMatriz(matriz, N); 
+        arquivoLeitura.open(nome, ios::in);
+        lerMatrizArquivoSeparado(matriz, arquivoLeitura, N);
+        imprimirMatriz(matriz, N);
 
-        if(p->vida == 0){
-            cout << "Suas vidas acabaram. :(\n ";
-        }       
+        while((p->vida > 0) /* && ((linha != (N -1)) && (coluna != (N-1))) && ((linha != 0)) && (coluna != (N-1)) && ((linha != (N -1)) && (coluna != 0)) */){
+            cout << "Posição atual: " << linha << " " << coluna << " " << matriz[linha][coluna] << "\n";
+            if(matriz[linha][coluna] != "#"){
+                if((matriz[linha][coluna] != "*")){
+                    cout << "Posição com número.\n";
+                    valorAtual = atoi(matriz[linha][coluna].c_str());
+                    if(valorAtual > 0){
+                        p->sacola++;
+                        valorAtual--;
+                        s << valorAtual;
+                        matriz[linha][coluna] = s.str();
+                        s.str("");
+                    }
+                    p->casasPercorridas++;
+                    
+                }
+
+                else if(matriz[linha][coluna] == "*"){
+                    p->vida--;
+                    p->casasPercorridas++;
+                    cout << "\nVocê perdeu uma vida.\n";
+                }
+            }
+
+            acrescimoLinha = sorteioLinha(linha, N);
+            acrescimoColuna = sorteioColuna(coluna, N);
+
+            if(matriz[linha + acrescimoLinha][coluna + acrescimoColuna] != "#"){
+                linha += acrescimoLinha;
+                coluna += acrescimoColuna;
+            }
+            else{
+                cout << "A posição sorteada foi uma parede. Vamos sortear de novo.\n";
+            }
+            
+            imprimirMatriz(matriz, N); 
+
+            if(p->vida == 0){
+                cout << "Suas vidas acabaram. :(\n ";
+            }       
+        }
+        nome.clear();
+        nArquivoString.clear();
+        auxiliar.str("");
+        nArquivo++;
     }
 }

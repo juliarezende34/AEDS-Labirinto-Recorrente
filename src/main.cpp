@@ -31,7 +31,7 @@ int main(){
         criaArquivoEimprimeMatrizNoArquivo(nMatrizesArquivo, matriz, matrizAtual, N);
     }
     
-    andar(p, linhaInicial, colunaInicial, N);
+    andar(p, linhaInicial, colunaInicial, N, nMatrizesArquivo);
 
     //Liberação da matriz
     for(int i = 0; i < N; i++){
