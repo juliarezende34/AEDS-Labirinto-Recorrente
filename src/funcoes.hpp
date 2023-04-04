@@ -221,7 +221,8 @@ void escreverMatrizArquivo(string ** matriz, ofstream &arquivo, int N){
 
 void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo, PosicoesAndadas * posicoes){
     string ** matriz;
-    int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna, contadorDeRodadas = 0;
+    int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna, contadorDeRodadas = 0, sacolaAnterior, vidaAnterior;
+    bool estado = false;
     stringstream s;
     ifstream arquivoLeitura;
     ofstream arquivoEscrita;
@@ -266,6 +267,10 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                     }
                 }
             }
+            if(estado && (linha == linhaInicial) && (coluna == colunaInicial) && (vidaAnterior == p->vida) && (sacolaAnterior == p->sacola)){
+                cout << "\nCAMINHO ZERADO!\n";
+                break;
+            }
         }
         else{//Estou na primeira rodada, linha == linhaInicial e coluna == colunaInicial
             if(matriz[linha][coluna] == "#"){
@@ -296,7 +301,10 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                         s.str("");
                         if(p->sacola == 4){
                             if(p->vida < 10){
+                                vidaAnterior = p->vida;
+                                sacolaAnterior = p->sacola;
                                 p->vida++;
+                                estado = true;
                             }
                             p->sacola = 0;
                         }
@@ -322,6 +330,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
             if(matriz[linha + acrescimoLinha][coluna + acrescimoColuna] != "#"){
                 linha += acrescimoLinha;
                 coluna += acrescimoColuna;
+                cout << "\nPróximo: " << linha << " " << coluna;
             }
             else{
                 cout << "A posição sorteada foi uma parede. Vamos sortear de novo.\n";
