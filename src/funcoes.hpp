@@ -1,6 +1,6 @@
 #include "pessoa.hpp"
-
-vector<string> nomeArquivos;
+#include "posicoesAndadas.hpp"
+#include <algorithm>
 
 int lerPrimeiraLinha(ifstream &arquivo){
     int N;
@@ -48,7 +48,6 @@ void criaArquivoEimprimeMatrizNoArquivo(int nMatrizesArquivo, string ** matriz, 
         auxiliar << nArquivo;
         nArquivoString = auxiliar.str();
         nome = path + "matriz" + nArquivoString + ".data";
-        nomeArquivos.push_back(nome);
         auxiliar.str("");
         matrizAtual++;
     }
@@ -196,15 +195,39 @@ void imprimirMatriz(string ** matriz, int N){
     cout << endl;
 }
 
-void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo){
+bool posicaoFoiVisitada(PosicoesAndadas * posicoes, int nArquivo, int linha, int coluna){
+    pair<int,int> par = {linha,coluna};
+    if(posicoes->vetorPosicoesAndadas[nArquivo - 1].empty()){
+        return false;
+    }
+    else{
+        if((find(posicoes->vetorPosicoesAndadas[nArquivo - 1].begin(), posicoes->vetorPosicoesAndadas[nArquivo - 1].end(), par)) != (posicoes->vetorPosicoesAndadas[nArquivo - 1].end())){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}
+
+void escreverMatrizArquivo(string ** matriz, ofstream &arquivo, int N){
+    for(int i = 0; i < N; i++){
+        for(int j = 0; j < N; j++){
+            arquivo << matriz[i][j] << " ";
+        }
+        arquivo << "\n";
+    }
+}
+
+void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo, PosicoesAndadas * posicoes){
     string ** matriz;
-    int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna;
+    int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna, contadorDeRodadas = 0;
     stringstream s;
     ifstream arquivoLeitura;
     ofstream arquivoEscrita;
 
     string path =  "dataset/";
-    string nome, nArquivoString;
+    string nome, nArquivoString, nomeEscrita;
     int nArquivo = 1;
     stringstream auxiliar;
 
@@ -213,7 +236,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
         matriz[i] = new string[N];
     }
 
-    while(nArquivo <= nMatrizesArquivo){
+    while(p->vida > 0){
         auxiliar << nArquivo;
         nArquivoString = auxiliar.str();
 
@@ -223,9 +246,43 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
         
         arquivoLeitura.open(nome, ios::in);
         lerMatrizArquivoSeparado(matriz, arquivoLeitura, N);
+        arquivoLeitura.close();
         imprimirMatriz(matriz, N);
 
-        while((p->vida > 0) /* && ((linha != (N -1)) && (coluna != (N-1))) && ((linha != 0)) && (coluna != (N-1)) && ((linha != (N -1)) && (coluna != 0)) */){
+        if(contadorDeRodadas > 0){//Atualizar posição inicial quando troca de matriz
+            if(matriz[0][0] != "#"){
+                linha = 0;
+                coluna = 0;
+            }
+            else{
+                for(int i = 0; i < N; i++){
+                    for(int j = 0; j < (N-1); j++){//Ignorando a última coluna devido à minha condição de troca
+                        if(matriz[i][j] != "#"){
+                            linha = i;
+                            coluna = j;
+                            cout << "\nA posição inicial após a troca foi " << linha << " " << coluna << endl;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else{//Estou na primeira rodada, linha == linhaInicial e coluna == colunaInicial
+            if(matriz[linha][coluna] == "#"){
+                for(int i = linha; i < N; i++){
+                    for(int j = coluna; j < (N-1); j++){//Ignorando a última coluna devido à minha condição de troca
+                        if(matriz[i][j] != "#"){
+                            linha = i;
+                            coluna = j;
+                            cout << "\nA posição inicial foi " << linha << " " << coluna << endl;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        while((coluna != (N-1)) && (p->vida > 0)){
             cout << "Posição atual: " << linha << " " << coluna << " " << matriz[linha][coluna] << "\n";
             if(matriz[linha][coluna] != "#"){
                 if((matriz[linha][coluna] != "*")){
@@ -237,16 +294,26 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                         s << valorAtual;
                         matriz[linha][coluna] = s.str();
                         s.str("");
-                    }
-                    p->casasPercorridas++;
-                    
+                        if(p->sacola == 4){
+                            if(p->vida < 10){
+                                p->vida++;
+                            }
+                            p->sacola = 0;
+                        }
+                    }    
+                    if(!posicaoFoiVisitada(posicoes, nArquivo, linha, coluna)){ 
+                        posicoes->vetorPosicoesAndadas[nArquivo - 1].push_back({linha,coluna});   
+                    }           
                 }
 
                 else if(matriz[linha][coluna] == "*"){
                     p->vida--;
-                    p->casasPercorridas++;
                     cout << "\nVocê perdeu uma vida.\n";
+                    if(!posicaoFoiVisitada(posicoes, nArquivo, linha, coluna)){ 
+                        posicoes->vetorPosicoesAndadas[nArquivo - 1].push_back({linha,coluna});   
+                    }
                 }
+                p->casasPercorridas++;
             }
 
             acrescimoLinha = sorteioLinha(linha, N);
@@ -264,11 +331,32 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
 
             if(p->vida == 0){
                 cout << "Suas vidas acabaram. :(\n ";
+                break;
             }       
         }
+        
+        arquivoEscrita.open(nome, ios::out);
+        escreverMatrizArquivo(matriz, arquivoEscrita, N);
+        arquivoEscrita.close();
+
         nome.clear();
         nArquivoString.clear();
         auxiliar.str("");
         nArquivo++;
+        if(nArquivo > nMatrizesArquivo){
+            nArquivo = 1;
+        }
+        contadorDeRodadas++;
     }
 }
+
+void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N){
+    int qtdPosicoesAndadas, naoAndadas;
+    for(int i = 0; i < nMatrizesArquivo; i++){
+        qtdPosicoesAndadas = posicoes->vetorPosicoesAndadas[i].size();
+        naoAndadas = (N * N) - qtdPosicoesAndadas;
+        cout << "\nQuantidade de posições não visitadas na matriz " << i + 1 << " = " << naoAndadas << endl;
+    }
+}
+//MUDANÇAS
+//COLUNA E LINHA INICIAIS SÃO PONTOS DE REFERÊNCIA PARA VER SE O CAMINHO É ZERADO: VER SE A SACOLA PERMANECE O MESMO VALOR

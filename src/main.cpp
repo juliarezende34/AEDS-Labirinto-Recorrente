@@ -1,5 +1,6 @@
 #include "pessoa.hpp"
 #include "funcoes.hpp"
+#include "posicoesAndadas.hpp"
 
 int main(){    
     int N, nMatrizesArquivo, linhaInicial, colunaInicial, matrizAtual = 1;
@@ -25,13 +26,15 @@ int main(){
 
     linhaInicial = determinarLinhaInicial();
     colunaInicial = determinarColunaInicial();
+    PosicoesAndadas * posicoes = new PosicoesAndadas(nMatrizesArquivo);
 
     for(int i = 0; i < nMatrizesArquivo; i++){
         lerMatrizArquivo(matriz, arquivo, N);
         criaArquivoEimprimeMatrizNoArquivo(nMatrizesArquivo, matriz, matrizAtual, N);
     }
     
-    andar(p, linhaInicial, colunaInicial, N, nMatrizesArquivo);
+    andar(p, linhaInicial, colunaInicial, N, nMatrizesArquivo, posicoes);
+    posicoesNaoVisitadas(posicoes, nMatrizesArquivo, N);
 
     //Liberação da matriz
     for(int i = 0; i < N; i++){
