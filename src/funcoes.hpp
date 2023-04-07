@@ -295,6 +295,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                     valorAtual = atoi(matriz[linha][coluna].c_str());
                     if(valorAtual > 0){
                         p->sacola++;
+                        p->valorTotal++;
                         valorAtual--;
                         s << valorAtual;
                         matriz[linha][coluna] = s.str();
@@ -320,6 +321,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                     if(!posicaoFoiVisitada(posicoes, nArquivo, linha, coluna)){ 
                         posicoes->vetorPosicoesAndadas[nArquivo - 1].push_back({linha,coluna});   
                     }
+                    p->perigosVisitados++;
                 }
                 p->casasPercorridas++;
             }
@@ -330,7 +332,6 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
             if(matriz[linha + acrescimoLinha][coluna + acrescimoColuna] != "#"){
                 linha += acrescimoLinha;
                 coluna += acrescimoColuna;
-                cout << "\nPróximo: " << linha << " " << coluna;
             }
             else{
                 cout << "A posição sorteada foi uma parede. Vamos sortear de novo.\n";
@@ -367,5 +368,3 @@ void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int 
         cout << "\nQuantidade de posições não visitadas na matriz " << i + 1 << " = " << naoAndadas << endl;
     }
 }
-//MUDANÇAS
-//COLUNA E LINHA INICIAIS SÃO PONTOS DE REFERÊNCIA PARA VER SE O CAMINHO É ZERADO: VER SE A SACOLA PERMANECE O MESMO VALOR

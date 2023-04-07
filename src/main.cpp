@@ -21,8 +21,8 @@ int main(){
         matriz[i] = (string*)malloc(N * sizeof(string));
     }
 
-    cout << "N = " << N << endl;
-    cout << "nMatrizesArquivo = " << nMatrizesArquivo << endl;
+    cout << "Tamanho das matrizes = " << N << endl;
+    cout << "Quantidade de matrizes = " << nMatrizesArquivo << endl;
 
     linhaInicial = determinarLinhaInicial();
     colunaInicial = determinarColunaInicial();
@@ -34,7 +34,11 @@ int main(){
     }
     
     andar(p, linhaInicial, colunaInicial, N, nMatrizesArquivo, posicoes);
+
+    cout << "\nCasas percorridas ao todo = " << p->casasPercorridas << endl;
+    cout << "\nSoma de itens consumidos = " << p->valorTotal << endl;
     posicoesNaoVisitadas(posicoes, nMatrizesArquivo, N);
+    cout << "\nPerigos enfrentados, no total = " << p->perigosVisitados << endl;
 
     //Liberação da matriz
     for(int i = 0; i < N; i++){

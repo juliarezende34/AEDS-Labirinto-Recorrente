@@ -14,7 +14,7 @@ using namespace std;
 
 class Pessoa{
     public:
-        int vida, sacola, casasPercorridas;
+        int vida, sacola, casasPercorridas, valorTotal, perigosVisitados;
         Pessoa();
 };
 
