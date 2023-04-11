@@ -219,6 +219,50 @@ void escreverMatrizArquivo(string ** matriz, ofstream &arquivo, int N){
     }
 }
 
+bool paredeAoRedor(string ** matriz, int linha, int coluna, int N){
+    bool retorno = false;
+    if(linha == 0){
+        if(coluna == 0){
+            if((matriz[linha + 1][coluna] == "#") && (matriz[linha + 1][coluna + 1] == "#") && (matriz[linha][coluna + 1] == "#")){
+                retorno = true;
+            }
+        }
+        else if(coluna == (N - 1)){
+            if((matriz[linha + 1][coluna] == "#") && (matriz[linha + 1][coluna - 1] == "#") && (matriz[linha][coluna - 1] == "#")){
+                retorno = true;
+            }
+        }
+        else{
+            if((matriz[linha + 1][coluna] == "#") && (matriz[linha + 1][coluna + 1] == "#") && (matriz[linha][coluna + 1] == "#") && (matriz[linha + 1][coluna - 1] == "#") && (matriz[linha][coluna - 1] == "#")){
+                retorno = true;
+            }
+        }
+    }
+    else if(linha == (N - 1)){
+        if(coluna == 0){
+            if((matriz[linha - 1][coluna] == "#") && (matriz[linha - 1][coluna + 1] == "#") && (matriz[linha][coluna + 1] == "#")){
+                retorno = true;
+            }
+        }
+        else if(coluna == (N-1)){
+            if((matriz[linha - 1][coluna] == "#") && (matriz[linha - 1][coluna - 1] == "#") && (matriz[linha][coluna - 1] == "#")){
+                retorno = true;
+            }
+        }
+        else{
+            if((matriz[linha - 1][coluna] == "#") && (matriz[linha - 1][coluna - 1] == "#") && (matriz[linha - 1][coluna + 1] == "#") && (matriz[linha][coluna - 1] == "#") && (matriz[linha][coluna + 1] == "#")){
+                retorno = true;
+            }
+        }
+    }
+    else{
+        if((matriz[linha + 1][coluna] == "#") && (matriz[linha - 1][coluna] == "#") && (matriz[linha][coluna + 1] == "#") && (matriz[linha][coluna - 1] == "#") && (matriz[linha + 1][coluna + 1] == "#") && (matriz[linha + 1][coluna - 1] == "#") && (matriz[linha - 1][coluna + 1] == "#") && (matriz[linha - 1][coluna - 1] == "#")){
+            retorno = true;
+        }
+    }
+    return retorno;
+}
+
 void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo, PosicoesAndadas * posicoes){
     string ** matriz;
     int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna, contadorDeRodadas = 0, sacolaAnterior, vidaAnterior;
@@ -287,8 +331,14 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
             }
         }
 
+        if(paredeAoRedor(matriz, linha, coluna, N)){
+            cout << "\nVocê está preso entre paredes, não há como andar. :(\n";
+            break;
+        }
+
         while((coluna != (N-1)) && (p->vida > 0)){
             cout << "Posição atual: " << linha << " " << coluna << " " << matriz[linha][coluna] << "\n";
+
             if(matriz[linha][coluna] != "#"){
                 if((matriz[linha][coluna] != "*")){
                     cout << "Posição com número.\n";
