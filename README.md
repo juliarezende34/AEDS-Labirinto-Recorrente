@@ -52,8 +52,10 @@ Trabalhar com o caminhamento de matrizes de forma aleatória, seguindo o seguint
 
 ## Resultados 
 
+## Conclusão
+
 ## Considerações finais
-* Após as manipulações, a memórias das matrizes são liberadas e os arquivos são fechados.
+* Após as manipulações, a memória da matriz é liberada e o arquivo é fechado.
 * Especificações da máquina em que o código foi rodado:
   * Processador Intel Core i5, 7th Gen;
   * Sistema Operacional Windows 10;
