@@ -293,7 +293,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
         arquivoLeitura.open(nome, ios::in);
         lerMatrizArquivoSeparado(matriz, arquivoLeitura, N);
         arquivoLeitura.close();
-        imprimirMatriz(matriz, N);
+        //imprimirMatriz(matriz, N);
 
         if(contadorDeRodadas > 0){//Atualizar posição inicial quando troca de matriz
             if(matriz[0][0] != "#"){
@@ -388,7 +388,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                 cout << "A posição sorteada foi uma parede. Vamos sortear de novo.\n";
             }
             
-            imprimirMatriz(matriz, N); 
+            //imprimirMatriz(matriz, N); 
 
             if(p->vida == 0){
                 cout << "Suas vidas acabaram. :(\n ";
@@ -412,10 +412,43 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
 }
 
 void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N){
-    int qtdPosicoesAndadas, naoAndadas;
+    int qtdPosicoesAndadas, naoAndadas, posicoesSemRepetir=0;
     for(int i = 0; i < nMatrizesArquivo; i++){
         qtdPosicoesAndadas = posicoes->vetorPosicoesAndadas[i].size();
+        posicoesSemRepetir += qtdPosicoesAndadas;
         naoAndadas = (N * N) - qtdPosicoesAndadas;
         cout << "\nQuantidade de posições não visitadas na matriz " << i + 1 << " = " << naoAndadas << endl;
+    }
+    cout << "\nQuantidade de posições andadas sem repetir = "  << posicoesSemRepetir << endl;
+}
+
+void arquivoOutput(ofstream &arquivo, int nMatrizesArquivo, int N){
+    ifstream arquivoLeitura;
+    int nArquivo = 1;
+    stringstream auxiliar;
+    string path =  "dataset/";
+    string nome, nArquivoString;
+    string ** matriz;
+
+    matriz = new string * [N];
+    for(int i = 0; i < N; i++){
+        matriz[i] = new string[N];
+    }
+
+    for(int i = 0; i < nMatrizesArquivo; i++){
+        auxiliar << nArquivo;
+        nArquivoString = auxiliar.str();
+        nome = path + "matriz" + nArquivoString + ".data";
+
+        arquivoLeitura.open(nome, ios::in);
+        lerMatrizArquivoSeparado(matriz, arquivoLeitura, N);
+        arquivoLeitura.close();
+        escreverMatrizArquivo(matriz, arquivo, N);
+        arquivo << '\n';
+
+        nome.clear();
+        nArquivoString.clear();
+        auxiliar.str("");
+        nArquivo++;
     }
 }

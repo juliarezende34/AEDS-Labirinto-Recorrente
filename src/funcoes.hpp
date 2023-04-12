@@ -32,3 +32,5 @@ bool paredeAoRedor(string ** matriz, int linha, int coluna, int N);//
 void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo, PosicoesAndadas * posicoes);//
 
 void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N);//
+
+void arquivoOutput(ofstream &arquivo, int nMatrizesArquivo, int N);

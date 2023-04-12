@@ -1,15 +1,22 @@
 #include "pessoa.hpp"
 #include "funcoes.hpp"
 #include "posicoesAndadas.hpp"
+#include <iostream>   
+#include <iomanip>
 
 int main(){    
     int N, nMatrizesArquivo, linhaInicial, colunaInicial, matrizAtual = 1;
     ifstream arquivo;
+    ofstream arquivoSaida;
     string ** matriz;
     Pessoa * p = new Pessoa();
+    time_t start, end;
+    time(&start);
+    ios_base::sync_with_stdio(false);
 
     //Retirada de informações do arquivo
     arquivo.open("dataset/input.data", ios::in);
+    arquivoSaida.open("dataset/output.data", ios::out);
     N = lerPrimeiraLinha(arquivo);
     nMatrizesArquivo = contarLinhasVazias(arquivo);
     arquivo.close();//Fechei aqui pois na função de contar linhas vazias, percorro todo o arquivo.
@@ -46,6 +53,15 @@ int main(){
     }
     free(matriz);
 
+    arquivoOutput(arquivoSaida, nMatrizesArquivo, N);
+    cout << "\nAs matrizes modificadas foram salvas em output.data\n";
+
     arquivo.close();
+    arquivoSaida.close();
+    time(&end);
+
+    double timeFinal = double(end - start);
+    cout << "\nTempo de execução = " << fixed << timeFinal << setprecision(5) << " segundos" << endl;
+
     return 0;
 }
