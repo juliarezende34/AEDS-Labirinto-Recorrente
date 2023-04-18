@@ -3,16 +3,15 @@
 #include "posicoesAndadas.hpp"
 #include <iostream>   
 #include <iomanip>
+#include <chrono>
 
-int main(){    
+int main(){  
+    auto start = chrono::high_resolution_clock::now();  
     int N, nMatrizesArquivo, linhaInicial, colunaInicial, matrizAtual = 1;
     ifstream arquivo;
     ofstream arquivoSaida;
     string ** matriz;
     Pessoa * p = new Pessoa();
-    time_t start, end;
-    time(&start);
-    ios_base::sync_with_stdio(false);
 
     //Retirada de informações do arquivo
     arquivo.open("dataset/input.data", ios::in);
@@ -58,10 +57,10 @@ int main(){
 
     arquivo.close();
     arquivoSaida.close();
-    time(&end);
 
-    double timeFinal = double(end - start);
-    cout << "\nTempo de execução = " << fixed << timeFinal << setprecision(5) << " segundos" << endl;
+    auto end = chrono::high_resolution_clock:: now();
+    auto tempo = chrono::duration_cast<chrono::milliseconds>(end-start);
+    cout << "Tempo de execução (ms) = " << tempo.count() << endl;
 
     return 0;
 }

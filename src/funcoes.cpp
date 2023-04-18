@@ -264,9 +264,26 @@ bool paredeAoRedor(string ** matriz, int linha, int coluna, int N){
     return retorno;
 }
 
+int verificarCondicaoTroca(string ** matriz, int N){
+    int colunaPossivel = -1;
+    for(int i = (N-1); i >= 0; i--){
+        for(int j = 0; j < N; j++){
+            if(matriz[j][i] != "#"){
+                colunaPossivel = i;
+                break;
+            }
+        }
+        if(colunaPossivel != -1){
+            break;
+        }
+    }
+    return colunaPossivel;
+}
+
 void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo, PosicoesAndadas * posicoes){
     string ** matriz;
     int linha = linhaInicial, coluna = colunaInicial, valorAtual, acrescimoLinha, acrescimoColuna, contadorDeRodadas = 0, sacolaAnterior, vidaAnterior;
+    int colunaTroca;
     bool estado = false;
     stringstream s;
     ifstream arquivoLeitura;
@@ -288,7 +305,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
 
         nome = path + "matriz" + nArquivoString + ".data";
 
-        cout << "\nARQUIVO: " << nome << endl;
+        //cout << "\nARQUIVO: " << nome << endl;
         
         arquivoLeitura.open(nome, ios::in);
         lerMatrizArquivoSeparado(matriz, arquivoLeitura, N);
@@ -336,13 +353,14 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
             cout << "\nVocê está preso entre paredes, não há como andar. :(\n";
             break;
         }
+        colunaTroca = verificarCondicaoTroca(matriz, N);
 
-        while((coluna != (N-1)) && (p->vida > 0)){
-            cout << "Posição atual: " << linha << " " << coluna << " " << matriz[linha][coluna] << "\n";
+        while((coluna != (colunaTroca)) && (p->vida > 0)){
+            //cout << "Posição atual: " << linha << " " << coluna << " " << matriz[linha][coluna] << "\n";
 
             if(matriz[linha][coluna] != "#"){
                 if((matriz[linha][coluna] != "*")){
-                    cout << "Posição com número.\n";
+                    //cout << "Posição com número.\n";
                     valorAtual = atoi(matriz[linha][coluna].c_str());
                     if(valorAtual > 0){
                         p->sacola++;
@@ -356,6 +374,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
                                 vidaAnterior = p->vida;
                                 sacolaAnterior = p->sacola;
                                 p->vida++;
+                                //cout << "Você ganhou uma vida!\n";
                                 estado = true;
                             }
                             p->sacola = 0;
@@ -368,7 +387,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
 
                 else if(matriz[linha][coluna] == "*"){
                     p->vida--;
-                    cout << "\nVocê perdeu uma vida.\n";
+                    //cout << "\nVocê perdeu uma vida.\n";
                     if(!posicaoFoiVisitada(posicoes, nArquivo, linha, coluna)){ 
                         posicoes->vetorPosicoesAndadas[nArquivo - 1].push_back({linha,coluna});   
                     }
@@ -383,9 +402,6 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
             if(matriz[linha + acrescimoLinha][coluna + acrescimoColuna] != "#"){
                 linha += acrescimoLinha;
                 coluna += acrescimoColuna;
-            }
-            else{
-                cout << "A posição sorteada foi uma parede. Vamos sortear de novo.\n";
             }
             
             //imprimirMatriz(matriz, N); 

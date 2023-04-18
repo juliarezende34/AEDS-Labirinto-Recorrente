@@ -34,3 +34,5 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
 void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N);//
 
 void arquivoOutput(ofstream &arquivo, int nMatrizesArquivo, int N);
+
+int verificarCondicaoTroca(string ** matriz, int N);
