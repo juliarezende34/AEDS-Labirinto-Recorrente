@@ -11,9 +11,10 @@ Trabalhar com o caminhamento de matrizes de forma aleatória, seguindo o seguint
 ## Arquivos
 * Dataset
   * ```input.data```: contém as matrizes;
+  * ```output.data```: contém as matrizes modificadas após o caminhamento.
 * Source
-  * ```pessoa.hpp```: assinatura da classe que representa o jogador. 
-  * ```pessoa.cpp```: implementação da classe que representa o jogador. 
+  * ```pessoa.hpp```: assinatura da classe que representa o jogador; 
+  * ```pessoa.cpp```: implementação da classe que representa o jogador; 
   * ```posicoesAndadas.hpp```: assinatura da classe que representa as posições andadas nas matrizes; 
   * ```posicoesAndadas.cpp```: implementação da classe que representa as posições andadas nas matrizes;
   * ```funcoes.hpp```: assinatura das funções necessárias para o funcionamento do código;
@@ -38,7 +39,7 @@ Trabalhar com o caminhamento de matrizes de forma aleatória, seguindo o seguint
 * Inicializadas em ```posicoesAndadas.cpp```:
   * "vetorPosicoesAndadas" (vector<pair<int, int>> *): vetor que contém um vector para cada matriz do arquivo, onde salva-se as coordenadas das posições percorridas em cada uma delas.
 
-## Funções - Manipulação de arquivos e matriz
+## Funções - Manipulação de arquivos e matriz - ```funcoes.cpp```
 * ```int lerPrimeiraLinha(ifstream &arquivo)```: lê a primeira linha de ```input.data``` e retorna o tamanho das matrizes;
 * ```int contarLinhasVazias(ifstream& arquivo)```: conta as linhas vazias de ```input.data``` e retorna a quantidade de matrizes;
 * ```void imprimirMatrizNoArquivo(string ** matriz, ofstream arquivo, int N)```: imprime uma matriz num arquivo;
@@ -48,13 +49,15 @@ Trabalhar com o caminhamento de matrizes de forma aleatória, seguindo o seguint
 * ```int determinarLinhaInicial()``` e ```int determinarColunaInicial()```: perguntam ao usuário a posição inicial do caminhamento;
 * ```void imprimirMatriz(string ** matriz, int N)```: imprime matriz no terminal;
 * ```void escreverMatrizArquivo(string ** matriz, ofstream &arquivo, int N)```: escreve uma matriz num arquivo;
+* ```void arquivoOutput(ofstream &arquivo, int nMatrizesArquivo, int N)```: escreve em ```output.data``` a matriz modificada após o caminhamento.
 
-## Funções - Caminhamento 
+## Funções - Caminhamento - ```funcoes.cpp``` 
 * ```void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizesArquivo, PosicoesAndadas * posicoes)```: procedimento principal do caminhamento da matriz, é onde acontece a mudança de posição e troca entre as matrizes;
 * ```int sorteioLinha(int linhaAtual, int N)``` e ```int sorteioColuna(int colunaAtual, int N)```: gera, de forma aleatória, o incremento a ser realizado na posição atual;
 * ```bool paredeAoRedor(string ** matriz, int linha, int coluna, int N)```: verifica se o jogador está preso entre paredes;
 * ```bool posicaoFoiVisitada(PosicoesAndadas * posicoes, int nArquivo, int linha, int coluna)```: verifica se a posição atual da matriz atual já foi visitada;
-* ```void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N)```: imprime quantas posições não foram visitadas em cada matriz.
+* ```void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N)```: imprime quantas posições não foram visitadas em cada matriz;
+* ```int verificarCondicaoTroca(string ** matriz, int N)```: ver qual coluna está habilitada para ser onde muda-se de matriz, ou seja, é possível chegar nessa localização. A coluna está habilitada caso ela não seja composta somente por ```#```.
 
 ## Procedimentos iniciais
 *Todos acontecem em ```main.cpp```*
@@ -69,11 +72,27 @@ A partir de ```input.data```, é possível determinar o número de matrizes e se
     * Caso já tenha acontecido mais de uma rodada, ou seja, houve troca de matriz, se a posição ```matriz[0][0] != "#"```, começo a andar a partir desse lugar. Se não, percorro a matriz até achar uma posição que não seja uma parede;
     * Caso a rodada seja a primeira, se a posição ```matriz[linhaInicial][colunaInicial] != "#"```, começo a andar a partir desse lugar. Se não, percorro a matriz até achar uma posição que não seja uma parede;
   * Antes de andar na matriz atual, verifica-se se o jogador está preso entre paredes;
-  * Procedimentos que acontecem enquanto o critério de troca de matriz não é satisfeito, nesse caso, enquanto ```coluna != (N - 1)``` (última coluna):
-    * Se a posição atual não for ```#``` nem ```*```, ela contém um número. Então subtrai-se 1 dessa posição, e incrementa em 1 a sacola e o valor total. Nesse momento, se a sacola tiver valor 4, ela é zerada e, caso o personagem tenha menos de 10 vidas, ele ganha uma. O valor antigo da vida e da sacola é salvo em 
+  * Verifica-se qual coluna, a partir da última, está habilitada para ser o critério de troca. O índice de sua posição é salvo em ```int colunaTroca```;
+  * Procedimentos que acontecem enquanto o critério de troca de matriz não é satisfeito, nesse caso, enquanto ```coluna != (colunaTroca)```:
+    * Se a posição atual não for ```#``` nem ```*```, ela contém um número. Então subtrai-se 1 dessa posição, e incrementa em 1 a sacola e o valor total. Nesse momento, se a sacola tiver valor 4, ela é zerada e, caso o personagem tenha menos de 10 vidas, ele ganha uma. O valor antigo da vida e da sacola é salvo em ```vidaAnterior``` e ```sacolaAnterior```, ```bool estado```(indicador de alteração no valor da vida) é setado como ```true```;
+      * Esses valores (```vidaAnterior```, ```sacolaAnterior``` e ```estado```, são o que determinam se o caminho percorrido é zerado. Quando o personagem passa na posição inicial da primeira matriz, se esses valores permanecem os mesmos, o caminho percorrido não gera mais alterações, então ele foi esgotado. Nesse caso, o jogo é finalizado.
+    * Se a posição atual conter ```*```, decrementa-se 1 do valor da vida e incrementa-se em 1 o contador de perigos visitados;
+    * Dentro dessas condicionais, verifica se a posição atual já foi visitada. Se não, ela é adicionada ao vetor de posições andadas, visando contá-las;
+    * Incrementa-se em 1 o contador de casas percorridas no total;
+    * Sorteio do incremento da linha e da coluna, gerando a próxima posição;
+      * Caso ela seja ```#```, o incremento à linha e à coluna não é feito e o sorteio acontece de novo;
+    * Se após a rodada a vida for zerada, o jogo acaba;
+  * Incrementa-se 1 em ```nArquivo``` para a troca de matriz. Caso o novo valor for maior que o número total de matrizes, ```nArquivo``` volta a ser 1, ou seja, o jogo volta para a primeira matriz;
+  * Incrementa-se 1 no contador de rodadas.
+  
+## Impressões finais no terminal
+* As casas percorridas ao todo, soma de itens consumidos e perigos enfrentados no total são acessadas através dos atributos da classe ```Pessoa```;
+* Função ```posicoesNaoVisitadas```:
+  * A quantidade de posições não visitadas em cada matriz é determinada com a subtração da quantidade total de posições da matriz pela quantidade de posições visitadas (tamanho do vector de posições andadas referente àquela matriz);
+  * Quantidade de posições visitadas sem repetir, no total: soma dos tamanhos das quantidades de posições visitadas de cada matriz.
 
 ## Resultados 
-
+*colocar explicação sobre o custo/tempo de execução*
 ## Conclusão
 
 ## Considerações finais
