@@ -43,7 +43,7 @@ int main(){
 
     cout << "\nCasas percorridas ao todo = " << p->casasPercorridas << endl;
     cout << "\nSoma de itens consumidos = " << p->valorTotal << endl;
-    posicoesNaoVisitadas(posicoes, nMatrizesArquivo, N);
+    posicoesRelatorio(posicoes, nMatrizesArquivo, N);
     cout << "\nPerigos enfrentados, no total = " << p->perigosVisitados << endl;
 
     //Liberação da matriz
@@ -58,9 +58,13 @@ int main(){
     arquivo.close();
     arquivoSaida.close();
 
+    apagarArquivosSeparados(nMatrizesArquivo);
+    cout << "\nOs arquivos de somente uma matriz foram excluídos.\n";
+
     auto end = chrono::high_resolution_clock:: now();
     auto tempo = chrono::duration_cast<chrono::milliseconds>(end-start);
-    cout << "Tempo de execução (ms) = " << tempo.count() << endl;
+    cout << "\nTempo de execução (ms) = " << tempo.count() << endl;
+    cout << endl;
 
     return 0;
 }

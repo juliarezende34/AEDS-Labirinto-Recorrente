@@ -427,7 +427,7 @@ void andar(Pessoa * p, int linhaInicial, int colunaInicial, int N, int nMatrizes
     }
 }
 
-void posicoesNaoVisitadas(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N){
+void posicoesRelatorio(PosicoesAndadas * posicoes, int nMatrizesArquivo, int N){
     int qtdPosicoesAndadas, naoAndadas, posicoesSemRepetir=0;
     for(int i = 0; i < nMatrizesArquivo; i++){
         qtdPosicoesAndadas = posicoes->vetorPosicoesAndadas[i].size();
@@ -467,4 +467,25 @@ void arquivoOutput(ofstream &arquivo, int nMatrizesArquivo, int N){
         auxiliar.str("");
         nArquivo++;
     }
+}
+
+void apagarArquivosSeparados(int nMatrizesArquivo){
+    int nArquivo = 1;
+    stringstream auxiliar;
+    string path =  "dataset/";
+    string nome, nArquivoString;
+
+    for(int i = 0; i < nMatrizesArquivo; i++){
+        auxiliar << nArquivo;
+        nArquivoString = auxiliar.str();
+        nome = path + "matriz" + nArquivoString + ".data";
+
+        remove(nome.c_str());
+
+        nome.clear();
+        nArquivoString.clear();
+        auxiliar.str("");
+        nArquivo++;
+    }
+
 }
