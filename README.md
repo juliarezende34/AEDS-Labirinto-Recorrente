@@ -113,7 +113,7 @@ A partir de ```input.data```, é possível determinar o número de matrizes e se
 Com esses resultados é possível realizar a interpretação do caminhamento. No caso das imagens acima, por exemplo, é possível afirmar que o personagem perdeu todas as suas vidas antes de passar para a segunda matriz, pois esta permanece inalterada em ```output.data```.
 
 ## Conclusão
-A partir do que foi mostrado acima, conclui-se que o objetivo de caminhar aleatoriamente por matrizes foi atendido e que o personagem atende à todas as regras de caminhamento requisitadas. Porém, não é possível analisar o custo computacional dessa forma de caminhamento, a não ser pela medida do tempo de execução. O custo de um algoritmo aleatório não depende mais somente do tamanho da entrada, mas sim das decisões tomadas por ele, que podem ser diferentes em cada execução.
+A partir do que foi mostrado acima, conclui-se que o objetivo de caminhar aleatoriamente por matrizes foi atendido e que o personagem atende à todas as regras de caminhamento requisitadas. Porém, não é possível analisar o custo computacional dessa forma de caminhamento, a não ser pela medida do tempo de execução. O custo de um algoritmo aleatório não depende mais somente do tamanho da entrada, mas sim das decisões tomadas por ele, que podem ser diferentes em cada execução. Em trabalhos futuros, o custo computacional poderá ser analisado caso o personagem percorresse um caminho pré-determinado pelo código ou por um conjunto de regras.
 
 ## Considerações finais
 * Após as manipulações, a memória da matriz é liberada, o arquivo é fechado e os arquivos contendo uma matriz são excluídos.
